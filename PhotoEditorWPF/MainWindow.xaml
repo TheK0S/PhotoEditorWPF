@@ -1,0 +1,28 @@
+﻿<Window x:Class="PhotoEditorWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PhotoEditorWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition/>
+            <RowDefinition Height="0.1*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Photo editor" FontWeight="Bold" TextAlignment="Center"/>
+        <WrapPanel x:Name="navigationPanel" Grid.Row="1" Cursor="Hand">
+            
+        </WrapPanel>
+
+
+        <Frame x:Name="mainFrame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
+        
+        <StackPanel x:Name="statusPanel" Orientation="Horizontal">
+
+        </StackPanel>
+    </Grid>
+</Window>
