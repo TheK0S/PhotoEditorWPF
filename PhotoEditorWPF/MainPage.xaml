@@ -16,8 +16,8 @@
 
         <StackPanel Grid.Column="0" Margin="15">
             <Button x:Name="addImage" Content="Добавить изображение" Width="150" Height="20" Click="addImage_Click"/>
-            <TextBlock Text="Яркость" Margin="0 10"/>
-            <Slider x:Name="brightness" Minimum="0" Maximum="100"/>
+            <TextBlock x:Name="brightnessTextValue" Text="Яркость 100%" Margin="0 10"/>
+            <Slider x:Name="brightnessSlider" Minimum="0" Maximum="2.0" SmallChange="0.01" ValueChanged="brightnessSlider_ValueChanged" Value="1"/>
             <TextBlock Text="Высота" Margin="0 10"/>
             <TextBox x:Name="heightImage" TextAlignment="Center"/>
             <TextBlock Text="Ширина" Margin="0 10"/>

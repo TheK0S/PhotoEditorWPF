@@ -27,16 +27,8 @@ namespace PhotoEditorWPF
             InitializeComponent();
             mainFrame.Navigate(new MainPage());
 
-            buttons.Add(new Button { Name = "b1", Height = 20, Width = 100, Content = "hjhj"});
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
-            buttons.Add(new Button { Name = "b2", Height = 20, Width = 100, Content = "qwqwwq" });
+            buttons.Add(new Button { Name = "b1", Height = 20, Width = 100, Content = "First image"});
+            
 
             foreach (var button in buttons)
                 navigationPanel.Children.Add(button);
