@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
+
 
 namespace PhotoEditorWPF
 {
@@ -23,7 +23,7 @@ namespace PhotoEditorWPF
     /// </summary>
     public partial class MainPage : Page
     {
-        List<System.Windows.Controls.Image> images = new List<System.Windows.Controls.Image>();
+        List<Image> images = new List<Image>();
         public MainPage()
         {
             InitializeComponent();
@@ -41,27 +41,30 @@ namespace PhotoEditorWPF
                 bitmap.EndInit();
 
                 currentImage.Source = bitmap;
-                images.Add(currentImage);
+                images.Add(DeepDataCopy(currentImage));                
             }
         }
 
         private void saveImage_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
-            if(saveFileDialog.ShowDialog() == true)
+            if (currentImage?.Source != null)
             {
-                RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)currentImage.ActualWidth, (int)currentImage.ActualHeight, 96, 96, PixelFormats.Default);
-                renderBitmap.Render(currentImage);
-
-                BitmapEncoder encoder = new JpegBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
-
-                using (var fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
+                if (saveFileDialog.ShowDialog() == true)
                 {
-                    encoder.Save(fileStream);
+                    BitmapSource bitmapSource = (BitmapSource)currentImage.Source;
+                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+
+                    using(FileStream stream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                    {
+                        encoder.Save(stream);
+                    }
                 }
             }
+            else
+                MessageBox.Show("Не выбрано изображения для сохранения", "Ошибка");
         }
 
         private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -113,6 +116,25 @@ namespace PhotoEditorWPF
             writeableBitmap.WritePixels(new Int32Rect(0, 0, bitmapSource.PixelWidth, bitmapSource.PixelHeight), pixels, stride, 0);
 
             return writeableBitmap;
+        }
+
+        private Image DeepDataCopy(Image image)
+        {
+            Image copiedImage = new Image();
+
+            if (image != null)
+            {
+                copiedImage.Width = image.Width;
+                copiedImage.Height = image.Height;
+
+                if (image.Source is BitmapSource bitmapSource)
+                {
+                    BitmapSource copiedBitmapSource = new WriteableBitmap(bitmapSource);
+                    copiedImage.Source = copiedBitmapSource;
+                }
+            }
+
+            return copiedImage;
         }
     }
 }
