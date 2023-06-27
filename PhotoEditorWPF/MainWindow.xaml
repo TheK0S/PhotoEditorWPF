@@ -21,7 +21,7 @@
 
         <Frame x:Name="mainFrame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
         
-        <StackPanel x:Name="statusPanel" Orientation="Horizontal">
+        <StackPanel Grid.Row="3" x:Name="statusPanel" Orientation="Horizontal">
 
         </StackPanel>
     </Grid>

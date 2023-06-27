@@ -22,19 +22,29 @@ namespace PhotoEditorWPF
     public partial class MainWindow : Window
     {
         List<Button> buttons = new List<Button>();
+        List<Task> tasks = new List<Task>();
         public MainWindow()
         {
             InitializeComponent();
+
             mainFrame.Navigate(new MainPage());
+
+            //OpenMainPageAsync();
 
             buttons.Add(new Button { Name = "b1", Height = 20, Width = 100, Content = "First image"});
             
 
             foreach (var button in buttons)
                 navigationPanel.Children.Add(button);
+        }
 
-
-            
+        private void OpenMainPageAsync()
+        {
+            tasks.Add(new Task(() => mainFrame.Navigate(new MainPage())));
+            //Task.Run(() =>
+            //{                
+            //    mainFrame.Navigate(new MainPage());
+            //});
         }
     }
 }

@@ -23,7 +23,8 @@ namespace PhotoEditorWPF
     /// </summary>
     public partial class MainPage : Page
     {
-        List<Image> images = new List<Image>();
+        Image? originalImage;
+
         public MainPage()
         {
             InitializeComponent();
@@ -41,7 +42,7 @@ namespace PhotoEditorWPF
                 bitmap.EndInit();
 
                 currentImage.Source = bitmap;
-                images.Add(DeepDataCopy(currentImage));                
+                originalImage = DeepDataCopy(currentImage);                
             }
         }
 
@@ -69,13 +70,10 @@ namespace PhotoEditorWPF
 
         private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if(currentImage != null)
+            if(currentImage?.Source != null)
             {
-                int imageIndex = 0;
-                if (imageIndex != -1)
-                {
-                    currentImage.Source = SetImageBrightness((BitmapSource)images[imageIndex].Source, brightnessSlider.Value);
-                }
+                currentImage.Source = SetImageBrightness((BitmapSource)originalImage.Source, brightnessSlider.Value);
+                brightnessTextValue.Text = $"Яркость {(int)(brightnessSlider.Value * 100)}%";
             }            
         }
 
