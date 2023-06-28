@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using MagicWithImageHappeningHere;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,11 +17,13 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 
+
 namespace PhotoEditorWPF
 {
     /// <summary>
     /// Логика взаимодействия для MainPage.xaml
     /// </summary>
+    /// 
     public partial class MainPage : Page
     {
         private Image? originalImage;
@@ -69,6 +72,31 @@ namespace PhotoEditorWPF
 
                 originalImage = DeepDataCopy(currentImage);
             }
+        }
+
+       
+        Image DeepDataCopy(Image image)
+        {
+            Image copiedImage = new Image();
+
+            if (image != null)
+            {
+                copiedImage.Width = image.Width;
+
+                copiedImage.Height = image.Height;
+
+                if (image.Source is BitmapSource bitmapSource)
+                {
+                    BitmapSource copiedBitmapSource = new WriteableBitmap(bitmapSource);
+
+                    copiedImage.Source = copiedBitmapSource;
+                }
+            }
+
+            return copiedImage;
+
+
+            
         }
 
         private void saveImage_Click(object sender, RoutedEventArgs e)
@@ -150,27 +178,7 @@ namespace PhotoEditorWPF
             return writeableBitmap;
         }
 
-        private Image DeepDataCopy(Image image)
-        {
-            Image copiedImage = new Image();
-
-            if (image != null)
-            {
-                copiedImage.Width = image.Width;
-
-                copiedImage.Height = image.Height;
-
-                if (image.Source is BitmapSource bitmapSource)
-                {
-                    BitmapSource copiedBitmapSource = new WriteableBitmap(bitmapSource);
-
-                    copiedImage.Source = copiedBitmapSource;
-                }
-            }
-
-            return copiedImage;
-        }
-
+    
 
         private void EnterEditingMode_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

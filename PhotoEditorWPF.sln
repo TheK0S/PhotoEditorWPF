@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoEditorWPF", "PhotoEditorWPF\PhotoEditorWPF.csproj", "{2F5F349F-C043-41C2-98C1-B4408AEB95B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoEditorWPF", "PhotoEditorWPF\PhotoEditorWPF.csproj", "{2F5F349F-C043-41C2-98C1-B4408AEB95B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicWithImageHappeningHere", "MagicWithImageHappeningHere\MagicWithImageHappeningHere.csproj", "{95F6BF5E-0FF6-49C3-84EF-BCE2BC436FC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{2F5F349F-C043-41C2-98C1-B4408AEB95B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F5F349F-C043-41C2-98C1-B4408AEB95B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F5F349F-C043-41C2-98C1-B4408AEB95B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95F6BF5E-0FF6-49C3-84EF-BCE2BC436FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95F6BF5E-0FF6-49C3-84EF-BCE2BC436FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95F6BF5E-0FF6-49C3-84EF-BCE2BC436FC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95F6BF5E-0FF6-49C3-84EF-BCE2BC436FC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
