@@ -96,6 +96,7 @@ namespace PhotoEditorWPF
             return copiedImage;
 
 
+
             
         }
 
