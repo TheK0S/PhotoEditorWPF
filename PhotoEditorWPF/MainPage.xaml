@@ -17,8 +17,11 @@
 
         </Style>
     </Page.Resources>
-    
-    
+
+    <TabControl>
+
+        <TabItem Header="Image" x:Name="FirtsImage" TabIndex="0">
+            
     <Grid Background="White" AllowDrop="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*"/>
@@ -26,7 +29,7 @@
             <ColumnDefinition Width="0.05*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Margin="15">
+        <StackPanel Grid.Column="0" Margin="15" AllowDrop="False">
             <Button x:Name="addImage" Content="Добавить изображение" Width="150" Height="20" Click="addImage_Click"/>
             
             <StackPanel x:Name="EnterEditingMode" Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent" PreviewMouseLeftButtonDown="EnterEditingMode_MouseLeftButtonDown">
@@ -53,18 +56,22 @@
 
             <TextBlock x:Name="brightnessTextValue" Text="Яркость 100%" Margin="0 10"/>
             <Slider x:Name="brightnessSlider" Minimum="0" Maximum="2.0" SmallChange="0.01" ValueChanged="brightnessSlider_ValueChanged" Value="1"/>
-            <TextBlock Text="Высота" Margin="0 10"/>
-            <TextBox x:Name="heightImage" TextAlignment="Center"/>
-            <TextBlock Text="Ширина" Margin="0 10"/>
-            <TextBox x:Name="widthImage"  TextAlignment="Center"/>
+            <TextBlock x:Name="CanvasHeight" Text="Высота" Margin="0 10" MouseDown="CanvasHeight_MouseDown" MouseMove="CanvasHeight_MouseMove" MouseUp="CanvasHeight_MouseUp"/>
+            <TextBox x:Name="heightImage" Text="{Binding ElementName=drawingCanvas, Path=Height,Mode=TwoWay}" TextAlignment="Center"/>
+                    <TextBlock x:Name="CanvasWidth"  Text="Ширина" Margin="0 10"/>
+                    <TextBox x:Name="widthImage" Text="{Binding ElementName=drawingCanvas, Path=Width,Mode=TwoWay}" TextAlignment="Center"/>
             <Button x:Name="saveImage" Content="Сохранить изображение" Width="150" Height="20" Margin="0 10" Click="saveImage_Click"/>
         </StackPanel>
 
         <Image x:Name="currentImage" Grid.Column="1"  Stretch="Fill"  />
-        <InkCanvas Grid.Column="1" x:Name="drawingCanvas" IsEnabled="False" DefaultDrawingAttributes="{Binding Path=DrawingAttributes}"  ResizeEnabled="False"  >
+        <InkCanvas Grid.Column="1" x:Name="drawingCanvas" IsEnabled="False" DefaultDrawingAttributes="{Binding Path=DrawingAttributes}"  ResizeEnabled="False" AllowDrop="True" >
             
         </InkCanvas>
 
-        <ScrollBar Grid.Column="2" Scroll="ScrollBar_Scroll" ></ScrollBar>
+        <ScrollBar x:Name="ScrollBar" Grid.Column="2" Scroll="ScrollBar_Scroll" ></ScrollBar>
     </Grid>
+
+        </TabItem>
+
+    </TabControl>
 </Page>

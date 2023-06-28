@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,9 @@ namespace PhotoEditorWPF
 
         private List<BitmapImage> bitmapImages = new();
 
-        private bool IsDrawingModeEnabled = false;
+        private bool IsDrawingModeEnabled = false, rigthMovement = false;
+
+        private Point _previousMousePosition;
 
         int index = 0;
         public System.Windows.Ink.DrawingAttributes DrawingAttributes { get; set; }
@@ -54,6 +57,8 @@ namespace PhotoEditorWPF
             DrawingAttributes.Width = 1;
 
             DrawingAttributes.Color = Colors.Black;
+
+            _previousMousePosition = new Point(CanvasWidth.Width, 10);
         }
 
         private void addImage_Click(object sender, RoutedEventArgs e)
@@ -66,7 +71,7 @@ namespace PhotoEditorWPF
             {
                 bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
 
-                StartProccesingImage(bitmapImages[index]);
+                //StartProccesingImage(bitmapImages[index],ScrollBar.Maximum);
 
                 drawingCanvas.Background = new ImageBrush(bitmapImages[index]);
 
@@ -153,7 +158,7 @@ namespace PhotoEditorWPF
 
         private void ScrollBar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
         {
-            GetPixelImage(((ScrollBar)sender).Value);
+           //drawingCanvas.Background= GetPixelImage((int)((ScrollBar)sender).Value-1);
         }
 
 
@@ -177,27 +182,57 @@ namespace PhotoEditorWPF
 
                 var images = files.Where(IsImage).ToList();
 
-                List<BitmapImage> bitmapImages = new List<BitmapImage>();
+                //for (int i = 0; i < images.Count; i++)
+                //{
+                //    bitmapImages.Add(new BitmapImage(new Uri(images[i])));
 
-                for (int i = 0; i < images.Count; i++)
+                //    drawingCanvas.Background= new ImageBrush(bitmapImages[i]);
+                //}
+
+
+                foreach (var image in images)
                 {
-                    bitmapImages.Add(new BitmapImage(new Uri(images[i])));
-
-                    drawingCanvas.Background= new ImageBrush(bitmapImages[i]);
+                    bitmapImages.Add(new BitmapImage(new Uri(image)));  
                 }
 
-                bitmapImages.AddRange(bitmapImages);
             }
 
 
         }
-        bool IsImage(string file)
+
+        private void CanvasHeight_MouseMove(object sender, MouseEventArgs e)
         {
-            string extentions = System.IO.Path.GetExtension(file);
+            if (!rigthMovement) return;
 
-            string[] imageExtentions = { ".jpeg", ".jpg", ".png", ",gif", "bpm" };
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                double delta = e.GetPosition(null).X - _previousMousePosition.X;
 
-            return imageExtentions.Contains(extentions, StringComparer.OrdinalIgnoreCase);
+                if (delta > 0)
+                {
+                    drawingCanvas.Height += 1;
+                }
+                else if (delta < 0)
+                {
+                    drawingCanvas.Height -= 1;
+
+                }
+
+                _previousMousePosition = e.GetPosition(null);
+            }
+
+            e.Handled = true;
+        }
+
+        private void CanvasHeight_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+           rigthMovement = true;
+        }
+
+
+        private void CanvasHeight_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            rigthMovement = false;
         }
     }
     
