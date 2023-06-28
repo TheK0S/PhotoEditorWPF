@@ -1,4 +1,4 @@
-﻿using MagicWithImageHappeningHere;
+﻿
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -30,6 +30,8 @@ namespace PhotoEditorWPF
 
         private DrawingVisual drawing;
 
+        BitmapImage bitmap;
+
         private Point clickPoint;
 
         private bool IsDrawning = false;
@@ -51,6 +53,7 @@ namespace PhotoEditorWPF
             DrawingAttributes.Width = 1;
 
             DrawingAttributes.Color =Colors.Black;
+
         }
 
         private void addImage_Click(object sender, RoutedEventArgs e)
@@ -61,16 +64,16 @@ namespace PhotoEditorWPF
 
             if (openFileDialog.ShowDialog() == true)
             {
-                BitmapImage bitmap = new BitmapImage(new Uri(openFileDialog.FileName));
+                bitmap = new BitmapImage(new Uri(openFileDialog.FileName));
 
-                currentImage.Source = bitmap;
+                //currentImage.Source = bitmap;
 
-                drawingCanvas.Width = bitmap.Width;
-                drawingCanvas.Height = bitmap.Height;
+                //drawingCanvas.Width = bitmap.Width;
+                //drawingCanvas.Height = bitmap.Height;
 
                 drawingCanvas.Background = new ImageBrush(bitmap);
 
-                originalImage = DeepDataCopy(currentImage);
+                originalImage = DeepDataCopy(new Image() { Source = bitmap });
             }
         }
 
@@ -102,15 +105,22 @@ namespace PhotoEditorWPF
 
         private void saveImage_Click(object sender, RoutedEventArgs e)
         {
-            if (currentImage?.Source != null)
-            {
+            if (originalImage?.Source != null)
+            { 
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
 
                 saveFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)drawingCanvas.ActualWidth, (int)drawingCanvas.ActualHeight, 96, 96, PixelFormats.Default);
+                    var width = drawingCanvas.Width;
+                    var height = drawingCanvas.Height;
+
+                    drawingCanvas.Height = bitmap.Height;
+                    drawingCanvas.Width = bitmap.Width;
+
+                    RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)drawingCanvas.Width, (int)drawingCanvas.Height, 96, 96, PixelFormats.Default);
+
                     renderTargetBitmap.Render(drawingCanvas);
 
                     BitmapEncoder encoder = new PngBitmapEncoder();
@@ -121,6 +131,9 @@ namespace PhotoEditorWPF
                     {
                         encoder.Save(stream);
                     }
+
+                    drawingCanvas.Height = height;
+                    drawingCanvas.Width = width;
                 }
             }
             else
@@ -129,9 +142,9 @@ namespace PhotoEditorWPF
 
         private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (currentImage?.Source != null)
+            if (originalImage?.Source != null)
             {
-                currentImage.Source = SetImageBrightness((BitmapSource)originalImage.Source, brightnessSlider.Value);
+                drawingCanvas.Background = new ImageBrush(SetImageBrightness((BitmapSource)originalImage.Source, brightnessSlider.Value));
 
                 brightnessTextValue.Text = $"Яркость {(int)(brightnessSlider.Value * 100)}%";
             }

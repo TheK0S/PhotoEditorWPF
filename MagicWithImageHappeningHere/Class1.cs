@@ -1,7 +1,4 @@
-﻿namespace MagicWithImageHappeningHere
+﻿void Pivo()
 {
-    public class Class1
-    {
 
-    }
 }

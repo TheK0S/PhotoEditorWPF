@@ -11,8 +11,4 @@
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MagicWithImageHappeningHere\MagicWithImageHappeningHere.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -60,6 +60,8 @@
         </StackPanel>
 
         <Image x:Name="currentImage" Grid.Column="1"  Stretch="Fill"  />
-        <InkCanvas Grid.Column="1" x:Name="drawingCanvas" IsEnabled="False" DefaultDrawingAttributes="{Binding Path=DrawingAttributes}" ></InkCanvas>
+        <InkCanvas Grid.Column="1" x:Name="drawingCanvas" IsEnabled="False" DefaultDrawingAttributes="{Binding Path=DrawingAttributes}"  ResizeEnabled="False"  >
+            
+        </InkCanvas>
     </Grid>
 </Page>
