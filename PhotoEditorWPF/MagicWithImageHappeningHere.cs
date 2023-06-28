@@ -17,45 +17,19 @@ namespace PhotoEditorWPF
     {
 
 
-      public static void  StartProccesingImage(Bitmap bitmap)
+
+
+      public static void  StartProccesingImage(BitmapImage bitmap)
         {
 
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-        public static Image DeepDataCopy(Image image)
+        public static BitmapImage GetPixelImage(double scrollBarValue)
         {
-            Image copiedImage = new Image();
-
-            if (image != null)
-            {
-                copiedImage.Width = image.Width;
-
-                copiedImage.Height = image.Height;
-
-                if (image.Source is BitmapSource bitmapSource)
-                {
-                    BitmapSource copiedBitmapSource = new WriteableBitmap(bitmapSource);
-
-                    copiedImage.Source = copiedBitmapSource;
-                }
-            }
-
-            return copiedImage;
-
+            return new BitmapImage();
         }
+
 
         public static  WriteableBitmap SetImageBrightness(BitmapSource bitmapSource, double brightness)
         {
