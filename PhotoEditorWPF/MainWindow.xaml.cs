@@ -27,9 +27,9 @@ namespace PhotoEditorWPF
         {
             InitializeComponent();
 
-            mainFrame.Navigate(new MainPage());
+            //mainFrame.Navigate(new MainPage());
 
-            //OpenMainPageAsync();
+            OpenMainPageAsync();
 
             buttons.Add(new Button { Name = "b1", Height = 20, Width = 100, Content = "First image"});
             
@@ -38,13 +38,19 @@ namespace PhotoEditorWPF
                 navigationPanel.Children.Add(button);
         }
 
-        private void OpenMainPageAsync()
+        private async void OpenMainPageAsync()
         {
-            tasks.Add(new Task(() => mainFrame.Navigate(new MainPage())));
-            //Task.Run(() =>
-            //{                
-            //    mainFrame.Navigate(new MainPage());
-            //});
+            //tasks.Add(new Task(() => mainFrame.Navigate(new MainPage())));
+            ////Task.Run(() =>
+            ////{                
+            ////    mainFrame.Navigate(new MainPage());
+            ////});
+
+           await  Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                mainFrame.Navigate(new MainPage());
+            });
+
         }
     }
 }

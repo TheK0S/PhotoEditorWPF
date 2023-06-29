@@ -58,7 +58,7 @@ namespace PhotoEditorWPF
 
             DrawingAttributes.Color = Colors.Black;
 
-            _previousMousePosition = new Point(CanvasWidth.Width, 10);
+            _previousMousePosition = new Point(CanvasHeight.ActualWidth, CanvasHeight.ActualHeight);
         }
 
         private void addImage_Click(object sender, RoutedEventArgs e)
@@ -71,8 +71,6 @@ namespace PhotoEditorWPF
             {
                 bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
 
-                //StartProccesingImage(bitmapImages[index],ScrollBar.Maximum);
-
                 drawingCanvas.Background = new ImageBrush(bitmapImages[index]);
 
 
@@ -80,9 +78,11 @@ namespace PhotoEditorWPF
 
                 drawingCanvas.MaxWidth = bitmapImages[index].Width;
 
-                widthImage.Text = bitmapImages[index].Width.ToString();
+                widthImage.Text = ((int)bitmapImages[index].Width).ToString();
 
-                heightImage.Text = bitmapImages[index].Height.ToString();
+                heightImage.Text = ((int)bitmapImages[index].Height).ToString();
+
+
             }
         }
 
@@ -156,21 +156,6 @@ namespace PhotoEditorWPF
             DrawingAttributes.Height = ((Slider)sender).Value;
         }
 
-        private void ScrollBar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
-        {
-           //drawingCanvas.Background= GetPixelImage((int)((ScrollBar)sender).Value-1);
-        }
-
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragDrop.DoDragDrop(this, this, DragDropEffects.Copy);
-            }
-        }
 
         protected override void OnDrop(DragEventArgs e)
         {
@@ -186,13 +171,13 @@ namespace PhotoEditorWPF
                 //{
                 //    bitmapImages.Add(new BitmapImage(new Uri(images[i])));
 
-                //    drawingCanvas.Background= new ImageBrush(bitmapImages[i]);
+                //    drawingCanvas.Background = new ImageBrush(bitmapImages[i]);
                 //}
 
 
                 foreach (var image in images)
                 {
-                    bitmapImages.Add(new BitmapImage(new Uri(image)));  
+                    bitmapImages.Add(new BitmapImage(new Uri(image)));
                 }
 
             }
@@ -200,9 +185,63 @@ namespace PhotoEditorWPF
 
         }
 
+        protected override void OnDragEnter(DragEventArgs e)
+        {
+            base.OnDragEnter(e);
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+
+        }
+
+
+
         private void CanvasHeight_MouseMove(object sender, MouseEventArgs e)
         {
             if (!rigthMovement) return;
+
+            ChangeCanvasValues(e, heightImage);
+
+            e.Handled = true;
+        }
+
+        private void CanvasWidth_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (!rigthMovement) return;
+
+            ChangeCanvasValues(e, widthImage);
+
+            e.Handled = true;
+        }
+
+
+        private void CanvasValues_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+           rigthMovement = true;
+        }
+        private void CanvasValues_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            rigthMovement = false;
+        }
+
+
+
+
+
+
+
+
+
+        void ChangeCanvasValues(MouseEventArgs e,TextBox textBox)
+        {
+            if (textBox.Text == "") return;
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
@@ -210,30 +249,39 @@ namespace PhotoEditorWPF
 
                 if (delta > 0)
                 {
-                    drawingCanvas.Height += 1;
+                    textBox.Text = (Convert.ToInt32(textBox.Text) + 1).ToString();
                 }
                 else if (delta < 0)
                 {
-                    drawingCanvas.Height -= 1;
+                    textBox.Text = (Convert.ToInt32(textBox.Text) - 1).ToString();
 
                 }
 
                 _previousMousePosition = e.GetPosition(null);
+
             }
 
-            e.Handled = true;
         }
 
-        private void CanvasHeight_MouseDown(object sender, MouseButtonEventArgs e)
+
+
+
+
+
+
+
+        private void heightImage_TextChanged(object sender, TextChangedEventArgs e)
         {
-           rigthMovement = true;
+            drawingCanvas.Height = double.TryParse(heightImage.Text, out double height) ? height : double.NaN;
         }
 
-
-        private void CanvasHeight_MouseUp(object sender, MouseButtonEventArgs e)
+      
+        private void widthImage_TextChanged(object sender, TextChangedEventArgs e)
         {
-            rigthMovement = false;
+            drawingCanvas.Width  = double.TryParse(widthImage.Text,out double width) ? width : double.NaN;  
         }
+
+
     }
     
 }

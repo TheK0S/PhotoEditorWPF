@@ -15,81 +15,7 @@ namespace PhotoEditorWPF
 {
    public static class MagicWithImageHappeningHere
     {
-       static  List<BitmapImage> bitmapImageStates = new List<BitmapImage>();
-
-        static Random random = new Random();
-
-      public static void  StartProccesingImage(BitmapImage bitmap , int scrollBarMaximum)
-        {
-            bitmapImageStates.Clear();
-
-            var pixels = GetPixels(bitmap);
-
-            var pixelsInStep = ((int)bitmap.Width * (int)bitmap.Height) / 100;
-
-            var currentPixelsSet = new List<Pixel>(pixels.Count - pixelsInStep);
-
-          
-
-            for (int i = 1; i < scrollBarMaximum; i++)
-            {
-                for (int j = 0; j < pixelsInStep; j++)
-                {
-                    var index = random.Next(pixels.Count);
-
-                    currentPixelsSet.Add(pixels[index]);
-
-                    pixels.RemoveAt(index);
-                }
-                //var currentBitmap = new WriteableBitmap((int)bitmap.Width, (int)bitmap.Height);
-            }
-
-            bitmapImageStates.Add(bitmap);
-        }
-
-        private static List<Pixel> GetPixels(BitmapImage bitmap )
-        {
-            var pixels = new List<Pixel>((int)bitmap.Width * (int)bitmap.Height);
-
-            WriteableBitmap writeableBitmap = new WriteableBitmap(bitmap);
-
-            byte[] pixelData = new byte[writeableBitmap.PixelWidth * writeableBitmap.PixelHeight * 4];
-
-            writeableBitmap.CopyPixels(pixelData, writeableBitmap.PixelWidth * 4, 0);
-
-            for (int y = 0; y < writeableBitmap.PixelHeight; y++)
-            {
-                for (int x = 0; x < writeableBitmap.PixelWidth; x++)
-                {
-                    int index = (y * writeableBitmap.PixelWidth + x) * 4;
-
-                    byte alpha = pixelData[index + 3];
-                    byte red = pixelData[index + 2];
-                    byte green = pixelData[index + 1];
-                    byte blue = pixelData[index];
-
-                    pixels.Add(new Pixel()
-                    {
-                        Color = System.Drawing.Color.FromArgb(alpha, red, green, blue),
-                        Point = new System.Drawing.Point(x, y)
-                    });
-                }
-            }
-            return pixels;
-        }
-
-
-
-        //public static ImageBrush GetPixelImage(int scrollBarValue)
-        //{
-        //    if (bitmapImageStates.Count != 0)
-        //    {
-        //       return new ImageBrush(bitmapImageStates[scrollBarValue]);
-
-        //    }
-
-
-        //}
+      
 
 
         public static  WriteableBitmap SetImageBrightness(BitmapSource bitmapSource, double brightness)
@@ -206,10 +132,18 @@ namespace PhotoEditorWPF
             return tabItem;
         }
 
-        //public static bool IsImageAdded(TabItem tabItem)
-        //{
-           
-        //}
+       
+      //public static bool IsImageAdded(List<BitmapImage> bitmapImages)
+      //  {
+      //      if (bitmapImages.Count == 0) return false;
+
+      //      if (bitmapImages[bitmapImages.Count - 1] != null)
+      //      {
+
+      //      }
+
+
+      //  }
 
 
 
