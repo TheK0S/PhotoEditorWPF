@@ -14,9 +14,9 @@
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Photo editor" FontWeight="Bold" TextAlignment="Center"/>
-        <WrapPanel x:Name="navigationPanel" Grid.Row="1" Cursor="Hand">
+        <TabPanel x:Name="navigationPanel" Grid.Row="1" Cursor="Hand">
             
-        </WrapPanel>
+        </TabPanel>
 
 
         <Frame x:Name="mainFrame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
