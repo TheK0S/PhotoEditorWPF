@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static PhotoEditorWPF.MagicWithImageHappeningHere;
 
 namespace PhotoEditorWPF
 {
@@ -21,36 +22,34 @@ namespace PhotoEditorWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Button> buttons = new List<Button>();
-        List<Task> tasks = new List<Task>();
         public MainWindow()
         {
             InitializeComponent();
 
+            tabControl = pages;
+
             //mainFrame.Navigate(new MainPage());
 
-            OpenMainPageAsync();
-
-            buttons.Add(new Button { Name = "b1", Height = 20, Width = 100, Content = "First image"});
-            
-
-            foreach (var button in buttons)
-                navigationPanel.Children.Add(button);
-        }
-
-        private async void OpenMainPageAsync()
-        {
-            //tasks.Add(new Task(() => mainFrame.Navigate(new MainPage())));
-            ////Task.Run(() =>
-            ////{                
-            ////    mainFrame.Navigate(new MainPage());
-            ////});
-
-           await  Application.Current.Dispatcher.InvokeAsync(() =>
+            for (int i = 0; i < 1; i++)
             {
-                mainFrame.Navigate(new MainPage());
-            });
+                MainPage mainPage = new MainPage();
+                Frame frame = new Frame();
+                frame.Content = mainPage;
 
+                pageList.Add(mainPage);
+
+                TabItem tabItem = new TabItem();
+                tabItem.Header = $"Page {i+1}";
+                tabItem.TabIndex = i;
+                tabItem.Content = frame;
+
+                pages.Items.Add(tabItem);             
+            }
+
+            pages.SelectedIndex = 0;
+            
         }
+
+        
     }
 }
