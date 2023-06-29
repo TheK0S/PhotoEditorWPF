@@ -1,12 +1,15 @@
-﻿using Microsoft.Win32;
+﻿
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -14,6 +17,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.AvalonDock.Layout;
+using static PhotoEditorWPF.MagicWithImageHappeningHere;
 
 
 namespace PhotoEditorWPF
@@ -21,48 +26,73 @@ namespace PhotoEditorWPF
     /// <summary>
     /// Логика взаимодействия для MainPage.xaml
     /// </summary>
+    /// 
     public partial class MainPage : Page
     {
-        Image? originalImage;
+        private List<DrawingVisual> drawings = new();
+
+        private List<BitmapImage> bitmapImages = new();
+
+        private bool IsDrawingModeEnabled = false, rigthMovement = false;
+
+        private Point _previousMousePosition;
+
+        int index = 0;
+        public System.Windows.Ink.DrawingAttributes DrawingAttributes { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
+
+
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            DataContext = this;
+
+            DrawingAttributes = new System.Windows.Ink.DrawingAttributes();
+            DrawingAttributes.Width = 1;
+            DrawingAttributes.Width = 1;
+
+            DrawingAttributes.Color = Colors.Black;
+
+            _previousMousePosition = new Point(CanvasWidth.Width, 10);
         }
 
         private void addImage_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+
             openFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
+
             if (openFileDialog.ShowDialog() == true)
             {
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(openFileDialog.FileName);
-                bitmap.EndInit();
+                bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
 
-                currentImage.Source = bitmap;
-                originalImage = DeepDataCopy(currentImage);                
+                //StartProccesingImage(bitmapImages[index],ScrollBar.Maximum);
+
+                drawingCanvas.Background = new ImageBrush(bitmapImages[index]);
+
+
+                drawingCanvas.MaxHeight = bitmapImages[index].Height;
+
+                drawingCanvas.MaxWidth = bitmapImages[index].Width;
+
+                widthImage.Text = bitmapImages[index].Width.ToString();
+
+                heightImage.Text = bitmapImages[index].Height.ToString();
             }
         }
 
+
+
         private void saveImage_Click(object sender, RoutedEventArgs e)
         {
-            if (currentImage?.Source != null)
+            if (bitmapImages[index] != null)
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    BitmapSource bitmapSource = (BitmapSource)currentImage.Source;
-                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-
-                    using(FileStream stream = new FileStream(saveFileDialog.FileName, FileMode.Create))
-                    {
-                        encoder.Save(stream);
-                    }
-                }
+                SaveImage(drawingCanvas, bitmapImages[index].Width, bitmapImages[index].Height);
             }
             else
                 MessageBox.Show("Не выбрано изображения для сохранения", "Ошибка");
@@ -70,69 +100,141 @@ namespace PhotoEditorWPF
 
         private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if(currentImage?.Source != null)
+            if (bitmapImages.Count > 0 && bitmapImages[index] != null)
             {
-                currentImage.Source = SetImageBrightness((BitmapSource)originalImage.Source, brightnessSlider.Value);
+
+                drawingCanvas.Background = new ImageBrush(SetImageBrightness(bitmapImages[index], brightnessSlider.Value));
+
                 brightnessTextValue.Text = $"Яркость {(int)(brightnessSlider.Value * 100)}%";
-            }            
-        }
 
-        private WriteableBitmap SetImageBrightness(BitmapSource bitmapSource, double brightness)
-        {
-            WriteableBitmap writeableBitmap = new WriteableBitmap(bitmapSource);
-
-            // Получение пиксельного массива изображения
-            int stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
-            int size = stride * bitmapSource.PixelHeight;
-            byte[] pixels = new byte[size];
-            bitmapSource.CopyPixels(pixels, stride, 0);
-
-            // Изменение яркости пикселей
-            for (int i = 0; i < pixels.Length; i += 4)
-            {
-                byte b = pixels[i];
-                byte g = pixels[i + 1];
-                byte r = pixels[i + 2];
-
-                // Изменение яркости каждого цветового канала
-                double adjustedR = r * brightness;
-                double adjustedG = g * brightness;
-                double adjustedB = b * brightness;
-
-                // Ограничение значений в пределах 0-255
-                adjustedR = Math.Max(0, Math.Min(255, adjustedR));
-                adjustedG = Math.Max(0, Math.Min(255, adjustedG));
-                adjustedB = Math.Max(0, Math.Min(255, adjustedB));
-
-                // Присвоение измененных значений обратно в пиксели
-                pixels[i] = (byte)adjustedB;
-                pixels[i + 1] = (byte)adjustedG;
-                pixels[i + 2] = (byte)adjustedR;
             }
 
-            // Запись измененных пикселей обратно в WriteableBitmap
-            writeableBitmap.WritePixels(new Int32Rect(0, 0, bitmapSource.PixelWidth, bitmapSource.PixelHeight), pixels, stride, 0);
-
-            return writeableBitmap;
         }
 
-        private Image DeepDataCopy(Image image)
+
+
+
+        private void EnterEditingMode_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Image copiedImage = new Image();
+            if (bitmapImages[index] == null) return;
 
-            if (image != null)
+
+            if (!IsDrawingModeEnabled)
             {
-                copiedImage.Width = image.Width;
-                copiedImage.Height = image.Height;
+                IsDrawingModeEnabled = true;
 
-                if (image.Source is BitmapSource bitmapSource)
+                drawingCanvas.IsEnabled = true;
+
+                return;
+            }
+
+            if (IsDrawingModeEnabled)
+            {
+                IsDrawingModeEnabled = false;
+
+                drawingCanvas.IsEnabled = false;
+
+                return;
+            }
+
+
+
+
+        }
+
+        private void WidthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (DrawingAttributes == null) return;
+
+            DrawingAttributes.Width = ((Slider)sender).Value;
+        }
+
+        private void HeightSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (DrawingAttributes == null) return;
+
+            DrawingAttributes.Height = ((Slider)sender).Value;
+        }
+
+        private void ScrollBar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+        {
+           //drawingCanvas.Background= GetPixelImage((int)((ScrollBar)sender).Value-1);
+        }
+
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragDrop.DoDragDrop(this, this, DragDropEffects.Copy);
+            }
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                var images = files.Where(IsImage).ToList();
+
+                //for (int i = 0; i < images.Count; i++)
+                //{
+                //    bitmapImages.Add(new BitmapImage(new Uri(images[i])));
+
+                //    drawingCanvas.Background= new ImageBrush(bitmapImages[i]);
+                //}
+
+
+                foreach (var image in images)
                 {
-                    BitmapSource copiedBitmapSource = new WriteableBitmap(bitmapSource);
-                    copiedImage.Source = copiedBitmapSource;
+                    bitmapImages.Add(new BitmapImage(new Uri(image)));  
                 }
+
             }
 
-            return copiedImage;
+
+        }
+
+        private void CanvasHeight_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!rigthMovement) return;
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                double delta = e.GetPosition(null).X - _previousMousePosition.X;
+
+                if (delta > 0)
+                {
+                    drawingCanvas.Height += 1;
+                }
+                else if (delta < 0)
+                {
+                    drawingCanvas.Height -= 1;
+
+                }
+
+                _previousMousePosition = e.GetPosition(null);
+            }
+
+            e.Handled = true;
+        }
+
+        private void CanvasHeight_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+           rigthMovement = true;
+        }
+
+
+        private void CanvasHeight_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            rigthMovement = false;
         }
     }
+    
 }
+
