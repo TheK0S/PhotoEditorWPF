@@ -28,27 +28,17 @@ namespace PhotoEditorWPF
     /// </summary>
     /// 
     public partial class MainPage : Page
-    {
-        private List<DrawingVisual> drawings = new();
-
-        private List<BitmapImage> bitmapImages = new();
+    {              
 
         private bool IsDrawingModeEnabled = false, rigthMovement = false;
 
         private Point _previousMousePosition;
 
-        int index = 0;
         public System.Windows.Ink.DrawingAttributes DrawingAttributes { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
-
-
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
 
             DataContext = this;
 
@@ -59,6 +49,12 @@ namespace PhotoEditorWPF
             DrawingAttributes.Color = Colors.Black;
 
             _previousMousePosition = new Point(CanvasHeight.ActualWidth, CanvasHeight.ActualHeight);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+
+
         }
 
         private void addImage_Click(object sender, RoutedEventArgs e)
@@ -100,7 +96,7 @@ namespace PhotoEditorWPF
 
         private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (bitmapImages.Count > 0 && bitmapImages[index] != null)
+            if (drawingCanvas != null && bitmapImages.Count > 0 && bitmapImages[index] != null)
             {
 
                 drawingCanvas.Background = new ImageBrush(SetImageBrightness(bitmapImages[index], brightnessSlider.Value));
@@ -110,8 +106,6 @@ namespace PhotoEditorWPF
             }
 
         }
-
-
 
 
         private void EnterEditingMode_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -136,10 +130,6 @@ namespace PhotoEditorWPF
 
                 return;
             }
-
-
-
-
         }
 
         private void WidthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -174,12 +164,14 @@ namespace PhotoEditorWPF
                 //    drawingCanvas.Background = new ImageBrush(bitmapImages[i]);
                 //}
 
+                int currentBitmapImagesCount = bitmapImages.Count;
 
                 foreach (var image in images)
                 {
                     bitmapImages.Add(new BitmapImage(new Uri(image)));
                 }
 
+                AddTabs(currentBitmapImagesCount);
             }
 
 
@@ -234,11 +226,6 @@ namespace PhotoEditorWPF
 
 
 
-
-
-
-
-
         void ChangeCanvasValues(MouseEventArgs e,TextBox textBox)
         {
             if (textBox.Text == "") return;
@@ -262,12 +249,6 @@ namespace PhotoEditorWPF
             }
 
         }
-
-
-
-
-
-
 
 
         private void heightImage_TextChanged(object sender, TextChangedEventArgs e)

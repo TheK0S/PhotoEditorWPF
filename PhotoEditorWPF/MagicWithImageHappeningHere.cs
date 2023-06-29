@@ -15,8 +15,14 @@ namespace PhotoEditorWPF
 {
    public static class MagicWithImageHappeningHere
     {
-      
 
+        public static List<BitmapImage> bitmapImages = new();
+
+        public static List<MainPage> pageList = new List<MainPage>();
+
+        public static int index = 0;
+
+        public static TabControl tabControl;
 
         public static  WriteableBitmap SetImageBrightness(BitmapSource bitmapSource, double brightness)
         {
@@ -132,18 +138,44 @@ namespace PhotoEditorWPF
             return tabItem;
         }
 
-       
-      //public static bool IsImageAdded(List<BitmapImage> bitmapImages)
-      //  {
-      //      if (bitmapImages.Count == 0) return false;
+        public static void AddTabs(int previusBitamapImagesCount)
+        {
+            if (previusBitamapImagesCount == 0)
+                tabControl.Items.Clear();
 
-      //      if (bitmapImages[bitmapImages.Count - 1] != null)
-      //      {
+            for (int i = previusBitamapImagesCount; i < bitmapImages.Count; i++)
+            {
+                index = i;
+                MainPage mainPage = new MainPage();
+                mainPage.drawingCanvas.Background = new ImageBrush(bitmapImages[i]);
+                Frame frame = new Frame();
+                frame.Content = mainPage;
 
-      //      }
+                pageList.Add(mainPage);
+
+                TabItem tabItem = new TabItem();
+                tabItem.Header = $"Page {i + 1}";
+                tabItem.TabIndex = i;
+                tabItem.Content = frame;
+
+                tabControl.Items.Add(tabItem);
+            }
+
+            tabControl.SelectedIndex = 0;
+        }
 
 
-      //  }
+        //public static bool IsImageAdded(List<BitmapImage> bitmapImages)
+        //  {
+        //      if (bitmapImages.Count == 0) return false;
+
+        //      if (bitmapImages[bitmapImages.Count - 1] != null)
+        //      {
+
+        //      }
+
+
+        //  }
 
 
 
