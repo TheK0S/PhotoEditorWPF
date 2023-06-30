@@ -38,6 +38,7 @@ namespace PhotoEditorWPF
 
         public System.Windows.Ink.DrawingAttributes DrawingAttributes { get; set; }
 
+
         public MainPage()
         {
             InitializeComponent();
@@ -106,11 +107,16 @@ namespace PhotoEditorWPF
 
         private void EnterEditingMode_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (bitmapImages[index] == null) return;
+            if ( bitmapImages.Count==0) return;
+
 
 
             if (!IsDrawingModeEnabled)
             {
+                Mouse.OverrideCursor = Cursors.Pen;
+
+                EditImagePanel.Height = 150;
+
                 IsDrawingModeEnabled = true;
 
                 drawingCanvas.IsEnabled = true;
@@ -120,6 +126,11 @@ namespace PhotoEditorWPF
 
             if (IsDrawingModeEnabled)
             {
+
+                Mouse.OverrideCursor = Cursors.Arrow;
+
+                EditImagePanel.Height = 0;
+
                 IsDrawingModeEnabled = false;
 
                 drawingCanvas.IsEnabled = false;
@@ -199,10 +210,15 @@ namespace PhotoEditorWPF
         private void CanvasValues_MouseDown(object sender, MouseButtonEventArgs e)
         {
            rigthMovement = true;
+
+            Mouse.OverrideCursor = Cursors.SizeWE;
+
         }
         private void CanvasValues_MouseUp(object sender, MouseButtonEventArgs e)
         {
             rigthMovement = false;
+
+           Mouse.OverrideCursor = Cursors.Arrow;
         }
 
 
@@ -214,6 +230,8 @@ namespace PhotoEditorWPF
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+
+
                 double delta = e.GetPosition(null).X - _previousMousePosition.X;
 
                 if (delta > 0)

@@ -24,8 +24,6 @@ namespace PhotoEditorWPF
 
         public static TabControl tabControl;
 
-
-
         public static async Task<WriteableBitmap> SetImageBrightness(BitmapSource bitmapSource, double brightness)
         {
             WriteableBitmap writeableBitmap = new WriteableBitmap(bitmapSource);
@@ -73,41 +71,47 @@ namespace PhotoEditorWPF
 
 
 
-        public static void SaveImage(InkCanvas drawingCanvas, double width, double height)
+        public static async void SaveImage(InkCanvas drawingCanvas, double width, double height)
         {
-            try
+            await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
 
-                if (saveFileDialog.ShowDialog() == true)
+                try
                 {
-                    var tempWidth = drawingCanvas.ActualWidth;
-                    var tempHeight = drawingCanvas.ActualHeight;
+                    SaveFileDialog saveFileDialog = new SaveFileDialog();
+                    saveFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png;*.gif;*.bmp)|*.jpg;*.jpeg;*.png;*.gif;*.bmp";
 
-                    //drawingCanvas.Height = height;
-                    //drawingCanvas.Width = width;
+                    if (saveFileDialog.ShowDialog() == true)
+                    { 
+                      
+                        double dpiX = 96;
+                        double dpiY = 96;
 
-                    RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)drawingCanvas.ActualWidth, (int)drawingCanvas.ActualHeight, 96, 96, PixelFormats.Default);
-                    renderTargetBitmap.Render(drawingCanvas);
-                    BitmapEncoder encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
 
-                    using (FileStream stream = new FileStream(saveFileDialog.FileName, FileMode.Create))
-                    {
-                        encoder.Save(stream);
+                        Rect bounds = VisualTreeHelper.GetDescendantBounds(drawingCanvas);
+                        RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(
+                            (int)bounds.Width, (int)bounds.Height, dpiX, dpiY, PixelFormats.Default);
+                        renderTargetBitmap.Render(drawingCanvas);
+
+                        BitmapEncoder encoder;
+
+                        encoder = new PngBitmapEncoder();
+
+                        encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+
+                        using (FileStream stream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                        {
+                            encoder.Save(stream);
+                        }
+
+                        MessageBox.Show("Image succesfully saved");
                     }
-
-                    //drawingCanvas.Height = tempHeight;
-                    //drawingCanvas.Width = tempWidth;
-
-                    MessageBox.Show("Image succesfully saved");
-                }                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Issue occurred while saving an image");
-            }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Issue occurred while saving an image");
+                }
+            });
         }
 
 
@@ -119,79 +123,72 @@ namespace PhotoEditorWPF
 
             return imageExtentions.Contains(extentions, StringComparer.OrdinalIgnoreCase);
         }
+  
 
-
-
-        public static TabItem AddNewImage(int tabIndex,BitmapImage bitmapImage) 
+        public static async void AddTabs(int previusBitamapImagesCount)
         {
-            TabItem tabItem = new TabItem();
-            tabItem.Header = "Image" + tabIndex;
-            tabItem.TabIndex = tabIndex ;
 
-            InkCanvas drawingCanvas = new InkCanvas();
-            drawingCanvas.Background = new ImageBrush(bitmapImage);
-
-            tabItem.Content = drawingCanvas;
-            
-            return tabItem;
-        }
-
-        public static void AddTabs(int previusBitamapImagesCount)
-        {
-            if (previusBitamapImagesCount == 0) tabControl.Items.Clear();
-
-            for (int i = previusBitamapImagesCount; i < bitmapImages.Count; i++)
+            await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                index = i;
 
-                MainPage mainPage = new MainPage();
-                mainPage.drawingCanvas.Background = new ImageBrush(bitmapImages[i]);
-                mainPage.widthImage.Text = bitmapImages[i].Width.ToString();
-                mainPage.heightImage.Text = bitmapImages[i].Height.ToString();
+                if (previusBitamapImagesCount == 0) tabControl.Items.Clear();
 
-                Frame frame = new Frame();
-                frame.Content = mainPage;
+                for (int i = previusBitamapImagesCount; i < bitmapImages.Count; i++)
+                {
+                    index = i;
 
-                pageList.Add(mainPage);
+                    MainPage mainPage = new MainPage();
+                    mainPage.drawingCanvas.Background = new ImageBrush(bitmapImages[i]);
+                    mainPage.widthImage.Text = bitmapImages[i].Width.ToString();
+                    mainPage.heightImage.Text = bitmapImages[i].Height.ToString();
 
-                TabItem tabItem = new TabItem();
-                tabItem.Header = CreateHeaderGrid($"Page {i+1}");
-                tabItem.TabIndex = i;
-                tabItem.Content = frame;
+                    Frame frame = new Frame();
+                    frame.Content = mainPage;
 
-                tabControl.Items.Add(tabItem);
-            }
+                    pageList.Add(mainPage);
+
+                    TabItem tabItem = new TabItem();
+                    tabItem.Header = CreateHeaderGrid($"Page {i + 1}");
+                    tabItem.TabIndex = i;
+                    tabItem.Content = frame;
+
+                    tabControl.Items.Add(tabItem);
+                }
+            });
         }
 
-        public static Grid CreateHeaderGrid(string headerName)
+        public static  Grid CreateHeaderGrid(string headerName)
         {
-            Grid headerGrid = new Grid();
-            headerGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            headerGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            
 
-            // Создание TextBlock для надписи слева
-            TextBlock textBlock = new TextBlock();
-            textBlock.Text = headerName;
-            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            textBlock.VerticalAlignment = VerticalAlignment.Center;
+                Grid headerGrid = new Grid();
+                headerGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                headerGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
-            // Создание кнопки закрытия справа
-            Button closeButton = new Button();
-            closeButton.Content = "✖";
-            closeButton.Background = new SolidColorBrush(Colors.White);
-            closeButton.HorizontalAlignment = HorizontalAlignment.Right;
-            closeButton.VerticalAlignment = VerticalAlignment.Center;
-            closeButton.Margin = new Thickness(5, 0, 0, 0);
-            closeButton.BorderThickness = new Thickness(0);
-            closeButton.Click += CloseButton_Click;
+                // Создание TextBlock для надписи слева
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = headerName;
+                textBlock.HorizontalAlignment = HorizontalAlignment.Left;
+                textBlock.VerticalAlignment = VerticalAlignment.Center;
 
-            // Добавление элементов в Grid хедера
-            headerGrid.Children.Add(textBlock);
-            headerGrid.Children.Add(closeButton);
-            Grid.SetColumn(textBlock, 0);
-            Grid.SetColumn(closeButton, 1);
+                // Создание кнопки закрытия справа
+                Button closeButton = new Button();
+                closeButton.Content = "✖";
+                closeButton.Background = new SolidColorBrush(Colors.White);
+                closeButton.HorizontalAlignment = HorizontalAlignment.Right;
+                closeButton.VerticalAlignment = VerticalAlignment.Center;
+                closeButton.Margin = new Thickness(5, 0, 0, 0);
+                closeButton.BorderThickness = new Thickness(0);
+                closeButton.Click += CloseButton_Click;
 
-            return headerGrid;
+                // Добавление элементов в Grid хедера
+                headerGrid.Children.Add(textBlock);
+                headerGrid.Children.Add(closeButton);
+                Grid.SetColumn(textBlock, 0);
+                Grid.SetColumn(closeButton, 1);
+
+            
+                return headerGrid;
         }
 
         private static void CloseButton_Click(object sender, RoutedEventArgs e)
