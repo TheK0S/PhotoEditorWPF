@@ -5,21 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PhotoEditorWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.05*"/>
-            <RowDefinition Height="20"/>
             <RowDefinition/>
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Photo editor" FontWeight="Bold" TextAlignment="Center"/>
-        <TabPanel x:Name="navigationPanel" Grid.Row="1" Cursor="Hand">
-            
-        </TabPanel>
 
-
-        <Frame x:Name="mainFrame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
+        <TabControl x:Name="pages" Grid.Row="1" SelectionChanged="pages_SelectionChanged"/>
         
         <StackPanel Grid.Row="3" x:Name="statusPanel" Orientation="Horizontal">
 
