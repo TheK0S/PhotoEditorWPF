@@ -155,7 +155,6 @@ namespace PhotoEditorWPF
                 pageList.Add(mainPage);
 
                 TabItem tabItem = new TabItem();
-                //tabItem.Header = $"Page {i + 1}";
                 tabItem.Header = CreateHeaderGrid($"Page {i+1}");
                 tabItem.TabIndex = i;
                 tabItem.Content = frame;
@@ -197,9 +196,17 @@ namespace PhotoEditorWPF
 
         private static void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            bitmapImages.RemoveAt(index);
-            tabControl.Items.RemoveAt(index);
-            pageList.RemoveAt(index);
+            if(tabControl.Items.Count == 1)
+            {
+                if (MessageBox.Show("Вы уверены что хотите закрыть приложение?", "Внимание!", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    Application.Current.MainWindow.Close();
+            }
+            else
+            {
+                bitmapImages.RemoveAt(index);
+                tabControl.Items.RemoveAt(index);
+                pageList.RemoveAt(index);
+            }                      
         }
     }
 }

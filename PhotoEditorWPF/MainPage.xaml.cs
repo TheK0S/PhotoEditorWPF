@@ -69,7 +69,7 @@ namespace PhotoEditorWPF
             if (openFileDialog.ShowDialog() == true)
             {
                 if(drawingCanvas.Background != defaultBackground)
-                    bitmapImages[index] = new BitmapImage(new Uri(openFileDialog.FileName));                
+                    bitmapImages[index] = new BitmapImage(new Uri(openFileDialog.FileName));         
                 else
                     bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
 
@@ -238,21 +238,6 @@ namespace PhotoEditorWPF
             drawingCanvas.Width  = double.TryParse(widthImage.Text,out double width) ? width : double.NaN;  
         }
 
-        //private Button CreateCloseButton()
-        //{
-        //    Button closeButton = new Button();
-        //    closeButton.Content = "x";
-        //    closeButton.Click += CloseButton_Click;
-
-        //    return closeButton;
-        //}
-
-        //private void CloseButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    bitmapImages.RemoveAt(index);
-        //    tabControl.Items.RemoveAt(index);
-        //    pageList.RemoveAt(index);
-        //}
     }
     
 }
