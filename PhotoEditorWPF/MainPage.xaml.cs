@@ -34,6 +34,8 @@ namespace PhotoEditorWPF
 
         private Point _previousMousePosition;
 
+        private Brush defaultBackground;
+
         public System.Windows.Ink.DrawingAttributes DrawingAttributes { get; set; }
 
         public MainPage()
@@ -48,12 +50,13 @@ namespace PhotoEditorWPF
 
             DrawingAttributes.Color = Colors.Black;
 
+            defaultBackground = drawingCanvas.Background;
+
             _previousMousePosition = new Point(CanvasHeight.ActualWidth, CanvasHeight.ActualHeight);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
 
         }
 
@@ -65,20 +68,18 @@ namespace PhotoEditorWPF
 
             if (openFileDialog.ShowDialog() == true)
             {
-                bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
+                if(drawingCanvas.Background != defaultBackground)
+                    bitmapImages[index] = new BitmapImage(new Uri(openFileDialog.FileName));         
+                else
+                    bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
 
                 drawingCanvas.Background = new ImageBrush(bitmapImages[index]);
 
-
                 drawingCanvas.MaxHeight = bitmapImages[index].Height;
-
                 drawingCanvas.MaxWidth = bitmapImages[index].Width;
 
                 widthImage.Text = ((int)bitmapImages[index].Width).ToString();
-
                 heightImage.Text = ((int)bitmapImages[index].Height).ToString();
-
-
             }
         }
 
@@ -87,24 +88,19 @@ namespace PhotoEditorWPF
         private void saveImage_Click(object sender, RoutedEventArgs e)
         {
             if (bitmapImages[index] != null)
-            {
-                SaveImage(drawingCanvas, bitmapImages[index].Width, bitmapImages[index].Height);
-            }
+                SaveImage(drawingCanvas, bitmapImages[index].PixelWidth, bitmapImages[index].PixelHeight);
             else
                 MessageBox.Show("Не выбрано изображения для сохранения", "Ошибка");
         }
 
-        private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private async void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (drawingCanvas != null && bitmapImages.Count > 0 && bitmapImages[index] != null)
             {
-
-                drawingCanvas.Background = new ImageBrush(SetImageBrightness(bitmapImages[index], brightnessSlider.Value));
+                drawingCanvas.Background = new ImageBrush(await SetImageBrightness(bitmapImages[index], brightnessSlider.Value));
 
                 brightnessTextValue.Text = $"Яркость {(int)(brightnessSlider.Value * 100)}%";
-
             }
-
         }
 
 
@@ -157,19 +153,10 @@ namespace PhotoEditorWPF
 
                 var images = files.Where(IsImage).ToList();
 
-                //for (int i = 0; i < images.Count; i++)
-                //{
-                //    bitmapImages.Add(new BitmapImage(new Uri(images[i])));
-
-                //    drawingCanvas.Background = new ImageBrush(bitmapImages[i]);
-                //}
-
                 int currentBitmapImagesCount = bitmapImages.Count;
 
                 foreach (var image in images)
-                {
                     bitmapImages.Add(new BitmapImage(new Uri(image)));
-                }
 
                 AddTabs(currentBitmapImagesCount);
             }
@@ -182,14 +169,9 @@ namespace PhotoEditorWPF
             base.OnDragEnter(e);
 
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
                 e.Effects = DragDropEffects.Copy;
-            }
             else
-            {
                 e.Effects = DragDropEffects.None;
-            }
-
         }
 
 
@@ -235,17 +217,11 @@ namespace PhotoEditorWPF
                 double delta = e.GetPosition(null).X - _previousMousePosition.X;
 
                 if (delta > 0)
-                {
                     textBox.Text = (Convert.ToInt32(textBox.Text) + 1).ToString();
-                }
                 else if (delta < 0)
-                {
                     textBox.Text = (Convert.ToInt32(textBox.Text) - 1).ToString();
 
-                }
-
                 _previousMousePosition = e.GetPosition(null);
-
             }
 
         }
@@ -261,7 +237,6 @@ namespace PhotoEditorWPF
         {
             drawingCanvas.Width  = double.TryParse(widthImage.Text,out double width) ? width : double.NaN;  
         }
-
 
     }
     
