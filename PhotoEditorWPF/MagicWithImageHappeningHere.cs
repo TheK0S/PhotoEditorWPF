@@ -82,13 +82,13 @@ namespace PhotoEditorWPF
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    var tempWidth = drawingCanvas.Width;
-                    var tempHeight = drawingCanvas.Height;
+                    var tempWidth = drawingCanvas.ActualWidth;
+                    var tempHeight = drawingCanvas.ActualHeight;
 
-                    drawingCanvas.Height = height;
-                    drawingCanvas.Width = width;
+                    //drawingCanvas.Height = height;
+                    //drawingCanvas.Width = width;
 
-                    RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)drawingCanvas.Width, (int)drawingCanvas.Height, 96, 96, PixelFormats.Default);
+                    RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)drawingCanvas.ActualWidth, (int)drawingCanvas.ActualHeight, 96, 96, PixelFormats.Default);
                     renderTargetBitmap.Render(drawingCanvas);
                     BitmapEncoder encoder = new PngBitmapEncoder();
                     encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
@@ -98,8 +98,8 @@ namespace PhotoEditorWPF
                         encoder.Save(stream);
                     }
 
-                    drawingCanvas.Height = tempHeight;
-                    drawingCanvas.Width = tempWidth;
+                    //drawingCanvas.Height = tempHeight;
+                    //drawingCanvas.Width = tempWidth;
 
                     MessageBox.Show("Image succesfully saved");
                 }                
@@ -115,7 +115,7 @@ namespace PhotoEditorWPF
         public static bool IsImage(string file)
         {
             string extentions = Path.GetExtension(file);
-            string[] imageExtentions = { ".jpeg", ".jpg", ".png", ",gif", "bpm" };
+            string[] imageExtentions = { ".jpeg", ".jpg", ".png", ".gif", ".bpm" };
 
             return imageExtentions.Contains(extentions, StringComparer.OrdinalIgnoreCase);
         }
