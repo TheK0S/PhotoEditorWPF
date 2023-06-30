@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:PhotoEditorWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
-    <Grid>
+    <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.05*"/>
             <RowDefinition/>
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Photo editor" FontWeight="Bold" TextAlignment="Center"/>
+        <TextBlock Text="Photo editor" FontWeight="Bold" VerticalAlignment="Center" FontSize="16" TextAlignment="Center"/>
 
         <TabControl x:Name="pages" Grid.Row="1" SelectionChanged="pages_SelectionChanged"/>
         
