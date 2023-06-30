@@ -28,8 +28,6 @@ namespace PhotoEditorWPF
 
             tabControl = pages;
 
-            //mainFrame.Navigate(new MainPage());
-
             for (int i = 0; i < 1; i++)
             {
                 MainPage mainPage = new MainPage();
@@ -39,7 +37,7 @@ namespace PhotoEditorWPF
                 pageList.Add(mainPage);
 
                 TabItem tabItem = new TabItem();
-                tabItem.Header = $"Page {i+1}";
+                tabItem.Header = CreateHeaderGrid("Page 1");
                 tabItem.TabIndex = i;
                 tabItem.Content = frame;
 

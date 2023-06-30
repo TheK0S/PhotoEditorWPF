@@ -155,12 +155,51 @@ namespace PhotoEditorWPF
                 pageList.Add(mainPage);
 
                 TabItem tabItem = new TabItem();
-                tabItem.Header = $"Page {i + 1}";
+                //tabItem.Header = $"Page {i + 1}";
+                tabItem.Header = CreateHeaderGrid($"Page {i+1}");
                 tabItem.TabIndex = i;
                 tabItem.Content = frame;
 
                 tabControl.Items.Add(tabItem);
             }
+        }
+
+        public static Grid CreateHeaderGrid(string headerName)
+        {
+            Grid headerGrid = new Grid();
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+            // Создание TextBlock для надписи слева
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = headerName;
+            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+
+            // Создание кнопки закрытия справа
+            Button closeButton = new Button();
+            closeButton.Content = "✖";
+            closeButton.Background = new SolidColorBrush(Colors.White);
+            closeButton.HorizontalAlignment = HorizontalAlignment.Right;
+            closeButton.VerticalAlignment = VerticalAlignment.Center;
+            closeButton.Margin = new Thickness(5, 0, 0, 0);
+            closeButton.BorderThickness = new Thickness(0);
+            closeButton.Click += CloseButton_Click;
+
+            // Добавление элементов в Grid хедера
+            headerGrid.Children.Add(textBlock);
+            headerGrid.Children.Add(closeButton);
+            Grid.SetColumn(textBlock, 0);
+            Grid.SetColumn(closeButton, 1);
+
+            return headerGrid;
+        }
+
+        private static void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            bitmapImages.RemoveAt(index);
+            tabControl.Items.RemoveAt(index);
+            pageList.RemoveAt(index);
         }
     }
 }
