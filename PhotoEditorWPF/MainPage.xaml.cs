@@ -65,20 +65,18 @@ namespace PhotoEditorWPF
 
             if (openFileDialog.ShowDialog() == true)
             {
-                bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
+                if(drawingCanvas.Background != new SolidColorBrush(Color.FromRgb(255,255,255)))
+                    bitmapImages[index] = new BitmapImage(new Uri(openFileDialog.FileName));                
+                else
+                    bitmapImages.Add(new BitmapImage(new Uri(openFileDialog.FileName)));
 
                 drawingCanvas.Background = new ImageBrush(bitmapImages[index]);
 
-
                 drawingCanvas.MaxHeight = bitmapImages[index].Height;
-
                 drawingCanvas.MaxWidth = bitmapImages[index].Width;
 
                 widthImage.Text = ((int)bitmapImages[index].Width).ToString();
-
                 heightImage.Text = ((int)bitmapImages[index].Height).ToString();
-
-
             }
         }
 
@@ -88,23 +86,21 @@ namespace PhotoEditorWPF
         {
             if (bitmapImages[index] != null)
             {
-                SaveImage(drawingCanvas, bitmapImages[index].Width, bitmapImages[index].Height);
+                SaveImage(drawingCanvas, bitmapImages[index].PixelWidth, bitmapImages[index].PixelHeight);
             }
             else
                 MessageBox.Show("Не выбрано изображения для сохранения", "Ошибка");
         }
 
-        private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private async void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (drawingCanvas != null && bitmapImages.Count > 0 && bitmapImages[index] != null)
-            {
+            {                
 
-                drawingCanvas.Background = new ImageBrush(SetImageBrightness(bitmapImages[index], brightnessSlider.Value));
+                drawingCanvas.Background = new ImageBrush(await SetImageBrightness(bitmapImages[index], brightnessSlider.Value));
 
                 brightnessTextValue.Text = $"Яркость {(int)(brightnessSlider.Value * 100)}%";
-
             }
-
         }
 
 

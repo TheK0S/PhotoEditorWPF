@@ -14,9 +14,8 @@
         </Grid.RowDefinitions>
         <TextBlock Text="Photo editor" FontWeight="Bold" TextAlignment="Center"/>
 
-        <TabControl x:Name="pages" Grid.Row="1">
-                       
-        </TabControl>
+        <TabControl x:Name="pages" Grid.Row="1" SelectionChanged="pages_SelectionChanged"/>
+        
         <Frame x:Name="mainFrame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
         
         <StackPanel Grid.Row="3" x:Name="statusPanel" Orientation="Horizontal">

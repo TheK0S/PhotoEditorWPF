@@ -50,6 +50,9 @@ namespace PhotoEditorWPF
             
         }
 
-        
+        private void pages_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            index = pages.SelectedIndex;
+        }
     }
 }
